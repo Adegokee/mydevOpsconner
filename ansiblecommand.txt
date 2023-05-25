@@ -1,0 +1,154 @@
+sudo amazon-linux-extras install ansible2
+cd /home
+cd ec2-user
+vi tunde.pem
+ssh-agent bash
+sudo cp tunde.pem ~/.ssh/
+ssh-add ~/.ssh/tunde.pem
+vi inventrory.txt
+ansible servers -m ping -i inventory.txt
+
+using ansible to install nginx
+vim install_nginx.sh
+#!/bin/bash
+yum update -y
+amazon-linux-extras install nginx1.12
+nginx -v
+systemctl start nginx
+systemctl enable nginx
+
+vi copyfile.yaml
+- name: copy inventory file to other servers
+  host: servers
+  become: True
+  tasks:
+  - name: copying files to server
+    copy: 
+      src: /home/ec2-user/inventory.txt
+      dest: /home/ec2-user
+
+
+sudo vim /etc/ansible/hosts
+ansible-playbook copyfile.yaml
+
+ansible-target1 ansible_host=3.86.16.189 ansible-connection=ssh ansible-user=ec2-user
+
+
+
+ansible-target2 ansible_host=3.83.115.160 ansible-connection=ssh ansible-user=ec2-user
+
+
+[naskinero]
+54.204.207.2
+52.207.253.100
+
+
+
+
+
+
+dockerfile
+FROM node:14-alpine
+ 
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 8080
+
+CMD [ "node", "app.js" ]
+
+
+
+
+
+
+deploymenet.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: second-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: second-app
+      tier: backend
+  template:
+    metadata: 
+      labels:
+        app: second-app
+        tier: backend
+    spec: 
+      containers:
+        - name: second-node
+          image: tech365/kub-app
+          
+   
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector: 
+    app: second-app
+  ports:
+    - protocol: 'TCP'
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+
+
+
+
+
+
+
+
+
+
+- name: Install Apache on EC2 instances
+  hosts: your_ec2_instance
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Start Apache service
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Install Apache
+      yum:
+        name: httpd
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: Start Apache service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      when: ansible_os_family == 'RedHat'
+
+
+
+

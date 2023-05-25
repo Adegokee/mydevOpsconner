@@ -1,0 +1,10 @@
+connect to docker hub
+search for jenkins on docker hub
+git bash anywhere on your laptop
+docker pull jenkins/jenkins:lts
+docker run -d -p 8080:8080 -p 50000 50000 jenkins/jenkins:lts
+type localhost:8080 on your browser on your laptop
+winpty docker exec -it containerid bash
+cat  /var/jenkins_home/secrets/initialAdminPassword
+
+

@@ -1,0 +1,58 @@
+docker pull image
+docker run --name=nameofproject -d -p port:80 imagelatest
+docker ps
+docker stop
+docker rename containerid  newname
+docker rm containname
+docker ps -a(to show all running container)
+docker rm $( docker ps -aq) (to remove a container)
+wimpty docker exec -it name bash
+
+
+
+
+====how to create image in docker===
+clone the aplication on git hub
+cd into the name of the app
+cd into the project
+code .
+create a dockerfile
+docker build -t dockerusername/nameoftheproject
+docker push dockerusername/nameoftheproject
+
+dockercontainarising and dockerising  django project
+create a dockerfile for the django app
+FROM python:3.7
+COPY . code
+WORKDIR /code
+EXPOSE 8000
+CMD ["python","manage.py","runserver","0.0.0.0:8000"]
+
+docker build . -t dockername/nameofapp:latest .
+create a docker-compose.yaml
+version: '4.0'
+services:
+  django:
+    image: django-docker:0.01
+    build: .
+    ports:
+      - "8000:8000"
+docker compose up
+docker push dockername/nameofapp
+run the port you have expose t the browser
+
+
+To create a react app.
+create a dockerfile
+docker build . -t name
+docker run -d -p 3030:3000 movie:latest
+
+dockerfile configuration below
+FROM node:16-alpine 
+WORKDIR /app
+COPY  package.json .
+COPY . .
+RUN npm install
+EXPOSE 3000
+CMD [ "npm", "start"]
+

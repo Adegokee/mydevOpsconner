@@ -1,0 +1,115 @@
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "4.65.0"
+    }
+  }
+}
+
+provider "aws" {
+  # Configuration options
+  access_key="AKIAYPXIUIX4IOOGLGZ3"
+secret_key = "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"
+region="us-east-1"
+}
+
+#awsvpc
+resource "aws_vpc" "TundeVpc" {
+  cidr_block = "10.0.0.0/16"
+    
+
+  tags={
+    Name="MyVpc"
+  }
+}
+
+#awssubnet
+resource "aws_subnet" "tundeSubnet" {
+  
+ cidr_block = "10.0.0.0/24"
+    vpc_id      = aws_vpc.TundeVpc.id
+    map_public_ip_on_launch = true
+ 
+
+  tags = {
+    Name = "MySubnet"
+  }
+}
+
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.TundeVpc.id
+
+  tags = {
+    Name = "main"
+  }
+}
+
+
+resource "aws_security_group" "allow_ssh_http" {
+  name        = "allow_tls"
+  description = "Allow TLS inbound traffic"
+  vpc_id      = aws_vpc.TundeVpc.id
+  
+
+
+dynamic ingress {
+    iterator = port
+    for_each =var.ports
+    content{
+        from_port = port.value
+        to_port = port.value
+        protocol        = "tcp"
+        cidr_blocks      = ["0.0.0.0/0"]
+    }
+  
+}
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "MySg"
+  }
+}
+
+
+
+resource "aws_route_table" "tundeRoute" {
+  vpc_id = aws_vpc.TundeVpc.id
+
+    route{
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+
+  tags = {
+    Name = "example"
+  }
+}
+
+resource "aws_route_table_association" "a" {
+  subnet_id      = aws_subnet.tundeSubnet.id
+  route_table_id = aws_route_table.tundeRoute.id
+}
+
+
+
+
+resource "aws_instance" "myInstance" {
+  ami           = "ami-03c7d01cf4dedc891" 
+  instance_type = "t2.micro"
+  key_name = "tundeAdegoke123"
+  subnet_id = aws_subnet.tundeSubnet.id
+  user_data = file("./install_apache.sh")
+  vpc_security_group_ids = [ aws_security_group.allow_ssh_http.id ]
+    
+  tags = {
+    Name = "myServer"
+  }
+}

@@ -1,0 +1,26 @@
+create a new instance on aws
+select ami ubuntu
+select t2 medium
+create a pemkey
+create a security group
+and had port range 3000
+source type should be anywhere
+connect to the ec2 instance
+sudo apt-get update
+sudo apt install docker.io
+
+install minikube
+https://blog.kubekode.org/setup-minikube-on-aws-ec2-instance
+  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x ./kubectl && sudo mv ./kubectl /usr/local/bin/kubectl
+  curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+  apt install conntrack
+
+sudo su
+apt install conntrack
+minikube status
+kubectl run myapp1 --image=adegokebabatunde/myreactapp3 
+kubectl expose pod myapp1 --type=NodePort --port=80 --name=tunde-service
+kubectl get svc
+ minikube service tunde-service --url
+curl http://192.168.49.2:32614
+kubectl port-forward svc/tunde-service 3000:80 --address 0.0.0.0 &

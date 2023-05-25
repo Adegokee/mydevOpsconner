@@ -1,0 +1,56 @@
+minikube start
+kubectl get deployment
+kubectl get pods
+kubectl get namespace
+
+
+createing and app
+kubectl create deployment name --image=dockeruaername/imagename
+
+scaling in kubernetics
+kubectl scale deployment/nameofapp --replicas=5
+
+creating a services
+kubectl expose deployment nameofapp --type=LoadBalancer --port=8000
+
+getting the service created above
+kubectl get svc
+
+To see the service in te browser
+minikube service nameofapp
+
+
+
+how to create namespace
+kubectl create namespace name
+kubectl apply -f name.yaml
+kubectl get deployment -n name
+kubectl get pods -n name
+
+
+
+
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <deployment_name>
+  labels:
+    <deployment_label_key>: <deployment_label_value>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      <pod_label_key>: <pod_label_value>
+  template:
+    metadata:
+      labels: 
+        <pod_label_key>: <pod_label_value>
+    spec:
+      containers:
+        - name: <pod_name>
+          image: <pod_image>
+          ports:
+            - containerPort: 8000
